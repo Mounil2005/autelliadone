@@ -1,0 +1,38 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          animations: ['framer-motion', 'aos'],
+          ui: ['lucide-react', 'three', 'vanta']
+        }
+      }
+    }
+  },
+  server: {
+    historyApiFallback: true,
+    proxy: {
+      '/api/sanity': {
+        target: 'https://r5o871tr.api.sanity.io',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/sanity/, ''),
+        secure: true
+      }
+    }
+  },
+  preview: {
+    historyApiFallback: true
+  }
+})
